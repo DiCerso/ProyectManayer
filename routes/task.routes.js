@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const checkToken = require('../middlewares/checkToken')
 
 const {changeState, detail, list, remove, store, update} = require('../controllers/tasks.controller');
 
@@ -8,7 +9,7 @@ const {changeState, detail, list, remove, store, update} = require('../controlle
 router
     .route('/')
         .get(list)
-        .post(store)
+        .post(checkToken,store)
 router
     .route('/:id')
         .get(detail)

@@ -20,9 +20,14 @@ const proyectSchema = new mongoose.Schema({
         required : true,
         trim : true
     },
+    tasks : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'Task'
+        }
+    ],
     createdBy : {
         type : mongoose.Schema.Types.ObjectId,
-        ref : 'user'
+        ref : 'User'
     },
     collaborators : [
         {
