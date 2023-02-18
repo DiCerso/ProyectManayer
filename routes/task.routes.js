@@ -11,10 +11,10 @@ router
         .get(list)
         .post(checkToken,store)
 router
-    .route('/:id')
-        .get(detail)
-        .put(update)
-        .delete(remove)
+    .route('/:idtask/:idproject?')
+        .get(checkToken,detail)
+        .put(checkToken,update)
+        .delete(checkToken,remove)
 router
     .post('/change-state/:id', changeState)
 

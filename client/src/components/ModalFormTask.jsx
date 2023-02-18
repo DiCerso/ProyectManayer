@@ -1,25 +1,29 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useRef } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 import { useProjects } from '../hooks/useProjects';
 import { useForm } from "../hooks/useForm";
 
 
 
-
 export const ModalFormTask = () => {
 
+    const { showModal, handleShowModal, showAlertModal, showAlert, storeTask, task } = useProjects();
+
     let prioridad = useRef(null)
+    let dateExpireinput = useRef(null);
 
     const { formValues, handleInputChange, reset } = useForm({
-        name: "",
-        description: "",
-        dateExpire: "",
+        name: task.name ? task.name : "",
+        description: task.description ? task.description : "",
+        dateExpire: task.dataExpire ? task.dataExpire.split("T")[0] : "",
         priority: ""
     });
 
+    
+
+
     let { name, description, dateExpire, priority } = formValues;
 
-    const { showModal, handleShowModal, showAlertModal, showAlert, storeTask } = useProjects();
     const handleClosed = () => {
         handleShowModal()
         showAlertModal("")
@@ -28,21 +32,32 @@ export const ModalFormTask = () => {
     const handleSubmit = (e) => {
         e.preventDefault()
         priority = prioridad.current.value;
-        console.log( priority )
         if ([name, description, priority, dateExpire].includes("")) {
             showAlert("Todos los campos son obligatorios");
             return null
         }
 
-        storeTask({
-            name,
-            description,
-            dateExpire,
-            priority
-        })
+        if(task.name){
+            storeTask({
+                _id : task._id,
+                name,
+                description,
+                dateExpire,
+                priority
+            })
+        }else{
+            storeTask({
+                name,
+                description,
+                dateExpire,
+                priority
+            })
+        }
+       
         reset()
-
     }
+
+
     return (
         <Transition.Root show={showModal} as={Fragment}>
             <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto"
@@ -90,7 +105,7 @@ export const ModalFormTask = () => {
                             <div className="sm:flex sm:items-start">
                                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                                     <Dialog.Title as="h3" className="text-lg leading-6 font-bold text-gray-900">
-                                        Nueva Tarea
+                                        {task.name ? "Actualizar tarea" : "Nueva Tarea" }
                                     </Dialog.Title>
 
                                     <form
@@ -131,6 +146,7 @@ export const ModalFormTask = () => {
                                                 className='border w-full p-2 mt-2 placeholder-grey-400 rounded-md'
                                                 name='dateExpire'
                                                 value={dateExpire}
+                                                ref={dateExpireinput}
                                                 onChange={handleInputChange}
                                             />
                                         </div>
@@ -140,15 +156,17 @@ export const ModalFormTask = () => {
                                             <select
                                                 className='border w-full p-2 mt-2 placeholder-grey-400 rounded-md'
                                                 onChange={handleInputChange}
-                                                ref = {prioridad}
+                                                ref={prioridad}
+                                                value={task ? task.priority : ""}
                                             >
                                                 <option value="" hidden
-                                                    defaultValue={true} key="">Seleccione...</option>
+                                                    defaultValue={task ? false : true} key="">Seleccione...</option>
                                                 {
                                                     ['Baja', 'Media',
                                                         'Alta'].map(prioridad => (
-                                                            <option value={prioridad}
-                                                                key={prioridad}>{prioridad}</option>
+                                                            <option
+                                                            value={prioridad}
+                                                                key={prioridad} >{prioridad}</option>
                                                         ))
                                                 }
                                             </select>
@@ -156,7 +174,7 @@ export const ModalFormTask = () => {
                                         <button type="submit"
                                             className=' bg-sky-600 hover:bg-sky-700 wfull p-3 text-white transition-colors cursor-pointer rounded'
                                         >
-                                            Guardar Tarea
+                                            {task.name ? "Actualizar" : "Guardar Tarea"}
                                         </button>
                                     </form>
                                 </div>

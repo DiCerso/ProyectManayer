@@ -30,6 +30,8 @@ const ProjectsProvider = ({ children }) => {
     const [showModal, setShowModal] = useState(false);
     const [alertModal, setAlertModal] = useState({});
 
+    const [task, settask] = useState({});
+
 
 
     const showAlert = (msg, time = true) => {
@@ -89,7 +91,6 @@ const ProjectsProvider = ({ children }) => {
             const { data } = await clientAxios.get(`/projects/${id}`, config);
             //console.log(data)
             setProject(data.project);
-
             sessionStorage.setItem('project', JSON.stringify(data.project))
 
         } catch (error) {
@@ -150,6 +151,8 @@ const ProjectsProvider = ({ children }) => {
 
     }
 
+    
+
     const deleteProject = async (id) => {
         try {
             const token = sessionStorage.getItem('token');
@@ -183,6 +186,9 @@ const ProjectsProvider = ({ children }) => {
     }
 
     const handleShowModal = () => {
+        if(showModal){
+            settask({});
+        }
         setShowModal(!showModal)
     }
 
@@ -207,21 +213,64 @@ const ProjectsProvider = ({ children }) => {
                     Authorization: token,
                 },
             };
-            task.project = project._id;
-            const { data } = await clientAxios.post("/task", task, config);
-            project.tasks = [...project.tasks, data.task];
-            setProject(project);
-            setShowModal(false)
-            Toast.fire({
-                icon: "success",
-                title: data.msg,
-            });
-            setAlert({});
+
+            if(task._id){
+                task.project = project._id;
+                const { data } = await clientAxios.put(`/task/${task._id}`, task, config);
+                project.tasks = project.tasks.map((tarea) => {
+                    if(tarea._id == task._id){
+                        return task;
+                    }
+                    return tarea;
+                })
+                setProject(project);
+                setShowModal(false)
+                Toast.fire({
+                    icon: "success",
+                    title: data.msg,
+                });
+                setAlert({});
+            }else{
+                task.project = project._id;
+                const { data } = await clientAxios.post("/task", task, config);
+                project.tasks = [...project.tasks, data.task];
+                setProject(project);
+                setShowModal(false)
+                Toast.fire({
+                    icon: "success",
+                    title: data.msg,
+                });
+                setAlert({});
+            }
         } catch (error) {
             console.log(error);
             showAlertModal(error.response ? error.response.data.msg : "Upss, hubo un error", false);
         }
     };
+
+    
+
+
+    const handleTask = async (idproject, idtask) => {
+        try {
+            const token = sessionStorage.getItem("token");
+            if (!token) return null;
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token,
+                },
+            };
+            if(idtask){
+                const { data } = await clientAxios.get(`/task/${idtask}/${idproject}`, config);
+                console.log(data);
+                settask(data.data);
+            }
+            handleShowModal();
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
 
     return (
@@ -239,7 +288,9 @@ const ProjectsProvider = ({ children }) => {
                 handleShowModal,
                 showModal,
                 showAlertModal,
-                storeTask
+                storeTask,
+                handleTask,
+                task
             }}
         >
             {children}

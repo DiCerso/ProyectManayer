@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Task = ({name, description, priority, date}) => {
+export const Task = ({name, description, priority, date, handleTask, id, idtask}) => {
   return (
     <div className="flex justify-between bg-white p-5 mb-5 shadow-md">
       <div>
@@ -10,7 +10,7 @@ export const Task = ({name, description, priority, date}) => {
         <p className="mb-1 text-gray-600">{priority}</p>
       </div>
       <div className="flex flex-col lg:flex-row lg:items-start gap-2">
-        <button className="bg-indigo-600 p-2 text-white uppercase font-bold text-sm rounded-lg">
+        <button className="bg-indigo-600 p-2 text-white uppercase font-bold text-sm rounded-lg" onClick={() => {handleTask(id, idtask)}}>
           Editar
         </button>
 

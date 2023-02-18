@@ -9,7 +9,7 @@ import { ModalFormTask } from "../components/ModalFormTask";
 export const Project = () => {
 
   const {id} = useParams();
-  const { loading, alert, getProject, project, showModal, handleShowModal } = useProjects();
+  const { loading, alert, getProject, project, showModal, handleShowModal, task, handleTask } = useProjects();
 
   let { name, description, dateExpire, client, _id } = project;
 
@@ -79,7 +79,7 @@ export const Project = () => {
           </div>
           {project.tasks ? 
           project.tasks.map((task) => (
-            <Task key={task._id} name={task.name} description={task.description} date={task.dateExpire} priority={task.priority}/>
+            <Task key={task._id} id={project._id} idtask={task._id} name={task.name} description={task.description} date={task.dateExpire} priority={task.priority} modal={handleShowModal} handleTask={handleTask}/>
           )) :
           <p>No hay tareas</p>
           }
