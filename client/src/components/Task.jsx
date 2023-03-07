@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Task = ({name, description, priority, date, handleTask, id, idtask}) => {
+export const Task = ({name, description,state, priority, date, handleTask, id, idtask, handleDeleteTask, handleTaskEstade, task}) => {
   return (
     <div className="flex justify-between bg-white p-5 mb-5 shadow-md">
       <div>
@@ -14,17 +14,17 @@ export const Task = ({name, description, priority, date, handleTask, id, idtask}
           Editar
         </button>
 
-        {false ? (
-          <button className="bg-sky-600 p-2 text-white uppercase font-bold text-sm rounded-lg">
+        {state ? (
+          <button className="bg-sky-600 p-2 text-white uppercase font-bold text-sm rounded-lg" onClick={() => {handleTaskEstade(id,task)}}>
             Completa
           </button>
         ) : (
-          <button className="bg-gray-600 p-2 text-white uppercase font-bold text-sm rounded-lg">
+          <button className="bg-gray-600 p-2 text-white uppercase font-bold text-sm rounded-lg" onClick={() => {handleTaskEstade(id,task)}}>
             Incompleta
           </button>
         )}
 
-        <button className="bg-red-600 p-2 text-white uppercase font-bold text-sm rounded-lg">
+        <button className="bg-red-600 p-2 text-white uppercase font-bold text-sm rounded-lg" onClick={() => {handleDeleteTask(id, idtask)}}>
           Eliminar
         </button>
       </div>

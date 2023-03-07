@@ -119,6 +119,7 @@ module.exports = {
         ok: true,
         msg: "Proyecto eliminado con éxito",
       });
+      
     } catch (error) {
       console.log(error);
       return errorResponse(res, error, "LOGIN");

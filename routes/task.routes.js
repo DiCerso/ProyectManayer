@@ -11,12 +11,14 @@ router
         .get(list)
         .post(checkToken,store)
 router
+    .route('/change-state/:id')
+        .put(checkToken, changeState)
+router
     .route('/:idtask/:idproject?')
         .get(checkToken,detail)
         .put(checkToken,update)
         .delete(checkToken,remove)
-router
-    .post('/change-state/:id', changeState)
+
 
 
 module.exports = router;

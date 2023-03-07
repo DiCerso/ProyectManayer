@@ -37,7 +37,7 @@ export const ModalFormTask = () => {
             return null
         }
 
-        if(task.name){
+        if(task.name){//editar
             storeTask({
                 _id : task._id,
                 name,
@@ -45,7 +45,7 @@ export const ModalFormTask = () => {
                 dateExpire,
                 priority
             })
-        }else{
+        }else{//nueva tarea
             storeTask({
                 name,
                 description,

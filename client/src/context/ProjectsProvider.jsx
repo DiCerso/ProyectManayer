@@ -151,7 +151,7 @@ const ProjectsProvider = ({ children }) => {
 
     }
 
-    
+
 
     const deleteProject = async (id) => {
         try {
@@ -186,7 +186,7 @@ const ProjectsProvider = ({ children }) => {
     }
 
     const handleShowModal = () => {
-        if(showModal){
+        if (showModal) {
             settask({});
         }
         setShowModal(!showModal)
@@ -203,6 +203,42 @@ const ProjectsProvider = ({ children }) => {
         }
     };
 
+    const handleDeleteTask = async (id, idtask) => {
+        try {
+            const token = sessionStorage.getItem('token');
+            if (!token) return null;
+
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token
+                }
+            }
+
+            const { data } = await clientAxios.delete(`/task/${idtask}/${id}`, config);
+
+            project.tasks = project.tasks.filter((tarea) => {
+                if (tarea._id != idtask) {
+                    return tarea;
+                }
+            })
+            console.log(project)
+            setProject(project);
+
+            Toast.fire({
+                icon: 'success',
+                title: data.msg
+            });
+
+            setAlert({})
+
+
+        } catch (error) {
+            console.error(error);
+            showAlert(error.response ? error.response.data.msg : 'Upss, hubo un error', false)
+        }
+    };
+
     const storeTask = async (task) => {
         try {
             const token = sessionStorage.getItem("token");
@@ -213,12 +249,11 @@ const ProjectsProvider = ({ children }) => {
                     Authorization: token,
                 },
             };
-
-            if(task._id){
+            if (task._id) { //update
                 task.project = project._id;
                 const { data } = await clientAxios.put(`/task/${task._id}`, task, config);
                 project.tasks = project.tasks.map((tarea) => {
-                    if(tarea._id == task._id){
+                    if (tarea._id == task._id) {
                         return task;
                     }
                     return tarea;
@@ -230,7 +265,7 @@ const ProjectsProvider = ({ children }) => {
                     title: data.msg,
                 });
                 setAlert({});
-            }else{
+            } else {//store
                 task.project = project._id;
                 const { data } = await clientAxios.post("/task", task, config);
                 project.tasks = [...project.tasks, data.task];
@@ -248,7 +283,7 @@ const ProjectsProvider = ({ children }) => {
         }
     };
 
-    
+
 
 
     const handleTask = async (idproject, idtask) => {
@@ -261,16 +296,48 @@ const ProjectsProvider = ({ children }) => {
                     Authorization: token,
                 },
             };
-            if(idtask){
+            if (idtask) {
                 const { data } = await clientAxios.get(`/task/${idtask}/${idproject}`, config);
-                console.log(data);
                 settask(data.data);
             }
             handleShowModal();
         } catch (error) {
             console.log(error);
+            showAlertModal(error.response ? error.response.data.msg : "Upss, hubo un error", false);
+        }
+    };
+
+
+    let handleTaskEstade = async (id,task) => {
+        try {
+            const token = sessionStorage.getItem("token");
+            if (!token) return null;
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token,
+                },
+            };
+
+
+            const { data } = await clientAxios.put(`/task/change-state/${id}`,task, config);
+
+            setProject(data.data);
+
+            Toast.fire({
+                icon: 'success',
+                title: data.msg
+            });
+
+            setAlert({});
+
+        } catch (error) {
+            console.error(error);
+            showAlert(error.response ? error.response.data.msg : 'Upss, hubo un error', false)
         }
     }
+
+
 
 
     return (
@@ -290,7 +357,9 @@ const ProjectsProvider = ({ children }) => {
                 showAlertModal,
                 storeTask,
                 handleTask,
-                task
+                task,
+                handleDeleteTask,
+                handleTaskEstade
             }}
         >
             {children}
