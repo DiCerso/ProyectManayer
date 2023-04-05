@@ -27,10 +27,15 @@ const ProjectsProvider = ({ children }) => {
     const [projects, setProjects] = useState([]);
     const [project, setProject] = useState({});
 
+    const [ProjectColaborator, setProjectColaborator] = useState({});
+
     const [showModal, setShowModal] = useState(false);
     const [alertModal, setAlertModal] = useState({});
 
+    const [showModal2, setShowModal2] = useState(false);
+
     const [task, settask] = useState({});
+
 
 
 
@@ -89,7 +94,6 @@ const ProjectsProvider = ({ children }) => {
             }
 
             const { data } = await clientAxios.get(`/projects/${id}`, config);
-            //console.log(data)
             setProject(data.project);
             sessionStorage.setItem('project', JSON.stringify(data.project))
 
@@ -165,7 +169,7 @@ const ProjectsProvider = ({ children }) => {
                 }
             }
 
-            const { data } = await clientAxios.delete(`/projects/${id}`, config);
+            const { data } = await clientAxios.delete(`/api/proyect${id}`, config);
 
             const projectsFiltered = projects.filter(project => project._id !== id);
 
@@ -190,6 +194,10 @@ const ProjectsProvider = ({ children }) => {
             settask({});
         }
         setShowModal(!showModal)
+    }
+
+    const handleShowModal2 = () => {
+        setShowModal2(!showModal2);
     }
 
     const showAlertModal = (msg, time = true) => {
@@ -222,7 +230,6 @@ const ProjectsProvider = ({ children }) => {
                     return tarea;
                 }
             })
-            console.log(project)
             setProject(project);
 
             Toast.fire({
@@ -337,6 +344,69 @@ const ProjectsProvider = ({ children }) => {
         }
     }
 
+    const addcollaborator = async (datos) => {
+        setLoading(true);
+        try {
+            let {id, projectid} = datos;
+            const token = sessionStorage.getItem('token');
+            if (!token) return null;
+
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token
+                }
+            }
+
+            const { data } = await clientAxios.post(`/projects/collaborator/${projectid}/${id}`,{}, config);
+            setProject(data.data) 
+
+            Toast.fire({
+                icon: 'success',
+                title: data.msg
+            });
+
+            setAlert({})
+
+        } catch (error) {
+            console.error(error);
+            showAlert(error.response ? error.response.data.msg : 'Upss, hubo un error', false)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const removecollaborator = async (id, projectid) => {
+        setLoading(true);
+        try {
+
+            const token = sessionStorage.getItem('token');
+            if (!token) return null;
+
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token
+                }
+            }
+
+            const { data } = await clientAxios.delete(`/projects/collaborator/${projectid}/${id}`, config);
+            setProject(data.data) 
+
+            Toast.fire({
+                icon: 'success',
+                title: data.msg
+            });
+
+            setAlert({})
+
+        } catch (error) {
+            console.error(error);
+            showAlert(error.response ? error.response.data.msg : 'Upss, hubo un error', false)
+        } finally {
+            setLoading(false)
+        }
+    }
 
 
 
@@ -354,12 +424,16 @@ const ProjectsProvider = ({ children }) => {
                 deleteProject,
                 handleShowModal,
                 showModal,
+                handleShowModal2,
+                showModal2,
                 showAlertModal,
                 storeTask,
                 handleTask,
                 task,
                 handleDeleteTask,
-                handleTaskEstade
+                handleTaskEstade,
+                removecollaborator,
+                addcollaborator
             }}
         >
             {children}

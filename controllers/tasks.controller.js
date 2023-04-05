@@ -84,9 +84,7 @@ module.exports = {
                 throw createError(400, "Todos los campos son obligatorios");
             }
 
-
             const project = await Project.findById(projectId);
-
 
             if (req.user._id.toString() !== project.createdBy.toString()) {
                 throw createError(403, "No estás autorizado");
@@ -145,7 +143,7 @@ module.exports = {
         
             await task.deleteOne();
 
-            await Project.updateOne({"_id" : idproject}, {$pull : {"tasks" : idtask}});// aca nos quedamos xd
+            await Project.updateOne({"_id" : idproject}, {$pull : {"tasks" : idtask}});
 
             return res.status(200).json({
                 ok: true,
@@ -182,7 +180,7 @@ module.exports = {
 
             await tasks.save();
 
-            project = await Project.findById(id).populate('tasks');
+            project = await Project.findById(id).populate('tasks').populate('collaborators');
             
 
             return res.status(200).json({

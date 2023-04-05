@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-const {profile} = require('../controllers/users.controller');
+const {profile, users} = require('../controllers/users.controller');
 const checkToken = require('../middlewares/checkToken');
 
 /* /api/users */
-router.get('/profile', checkToken, profile);
+router
+    .get('/', checkToken, users)
+    .get('/profile', checkToken, profile)
 
 module.exports = router;
 

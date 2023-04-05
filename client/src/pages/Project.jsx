@@ -4,14 +4,15 @@ import { Alert } from "../components/Alert";
 import { Collaborator } from "../components/Collaborator";
 import { Task } from "../components/Task";
 import { useProjects } from "../hooks/useProjects";
+import { ModalFormCollaborator } from "../components/ModalFormCollaborator";
 import { ModalFormTask } from "../components/ModalFormTask";
 
 export const Project = () => {
 
   const {id} = useParams();
-  const { loading, alert, getProject, project, showModal, handleShowModal, handleTask, handleDeleteTask, handleTaskEstade } = useProjects();
+  const { loading, alert, getProject, project, showModal, handleShowModal, handleTask, handleDeleteTask, handleTaskEstade, removecollaborator, showModal2, handleShowModal2 } = useProjects();
 
-  let { name, description, dateExpire, client, _id } = project;
+  let { name, description, dateExpire, client, _id} = project;
 
   useEffect(() => {
     getProject(id);
@@ -88,7 +89,7 @@ export const Project = () => {
 
             <button
               className="flex justify-center items-center gap-1 text-gray-500 hover:text-black cursor-pointer"
-              /* onClick={handleModalAddCollaborator} */
+              onClick={handleShowModal2} 
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -108,12 +109,19 @@ export const Project = () => {
               <p>Agregar Colaborador</p>
             </button>
           </div>
-          {[1, 2].map((collaborator) => (
-            <Collaborator key={collaborator}/>
-          ))}
+          {project.collaborators ? 
+          project.collaborators.map((collaborator) => (
+            <Collaborator key={collaborator._id} name={collaborator.name} mail={collaborator.email} id={collaborator._id} projectid={_id} removecollaborator={removecollaborator}/>
+          )) : 
+          <h1>No hay Colaboradores</h1>
+          }
         </>
       )}
-      {showModal && <ModalFormTask/>
+      {
+      showModal && <ModalFormTask/>
+      }
+      {
+      showModal2 && <ModalFormCollaborator project={project}/>
       }
     </>
   );

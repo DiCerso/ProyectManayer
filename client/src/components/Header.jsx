@@ -1,7 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+
 
 export const Header = () => {
+
+    const {logout} = useAuth();
+
 
     return (
         <div className="px-4 py-5 bg-white border-b">
@@ -19,6 +24,7 @@ export const Header = () => {
                 type="button"
                 /* onClick={closeSession} */
                 className="text-white text-sm bg-sky-600 p-2 rounded uppercase font-bold"
+                onClick={() => {logout()}}
                 >
                     Cerrar sesión
                 </button>

@@ -15,7 +15,7 @@ export const Projects = () => {
     <h1
      className='text-4xl font-black'
     >
-      Proyectos
+      Proyectos Propios
     </h1>
     <div
      className='bg-white p-5 shadow mt-10 rounded-md'
