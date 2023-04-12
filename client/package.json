@@ -7,6 +7,7 @@
     "dev": "vite --port 3000",
     "build": "vite build",
     "preview": "vite preview"
+    "building" : "concurrently \"npm i \" \" npm run build\""
   },
   "dependencies": {
     "@headlessui/react": "^1.7.10",
